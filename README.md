@@ -3,8 +3,7 @@
 
 Este proyecto permite grabar videos desde una cámara Dahua y almacenarlos en MongoDB. También incluye funcionalidades para procesar los videos y analizar imágenes térmicas.
 
-## Configuración
-# config.py
+
 # Renombra este archivo a config.py y rellena los valores apropiados
 
 CAMERA_URL = "rtsp://usuario:contraseña@ip_de_la_camara:puerto/cam/realmonitor?channel=1&subtype=0"
