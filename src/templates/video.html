@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Video en Tiempo Real</title>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/4.0.1/socket.io.js"></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', (event) => {
+            var socket = io.connect('http://' + document.domain + ':' + location.port);
+            var video = document.getElementById('video');
+
+            socket.on('connect', function() {
+                console.log("Conectado al servidor de sockets");
+                socket.emit('start_video');
+            });
+
+            socket.on('new_frame', function(data) {
+                console.log("Nuevo frame recibido");
+                var frame = document.getElementById('frame');
+                frame.src = 'data:image/jpeg;base64,' + data.frame;
+
+                var thermalData = data.thermal_data;
+                document.getElementById('min_temp').textContent = thermalData.min_temp.toFixed(2);
+                document.getElementById('max_temp').textContent = thermalData.max_temp.toFixed(2);
+                document.getElementById('avg_temp').textContent = thermalData.avg_temp.toFixed(2);
+                document.getElementById('std_dev').textContent = thermalData.std_dev.toFixed(2);
+                document.getElementById('anomalies').textContent = thermalData.anomalies.length;
+            });
+
+            socket.on('error', function(errorMsg) {
+                alert(errorMsg);
+            });
+        });
+    </script>
+</head>
+<body>
+    <h1>Video en Tiempo Real</h1>
+    <img id="frame" alt="Frame de video en tiempo real">
+    <div>
+        <h2>Datos Térmicos</h2>
+        <p>Temperatura Mínima: <span id="min_temp"></span> °C</p>
+        <p>Temperatura Máxima: <span id="max_temp"></span> °C</p>
+        <p>Temperatura Promedio: <span id="avg_temp"></span> °C</p>
+        <p>Desviación Estándar: <span id="std_dev"></span> °C</p>
+        <p>Anomalías Detectadas: <span id="anomalies"></span></p>
+    </div>
+</body>
+</html>

@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Análisis Térmico</title>
+</head>
+<body>
+    <h1>Análisis Térmico</h1>
+
+    <!-- Sección para subir una imagen térmica para analizar -->
+    <h2>Sube una imagen térmica para analizar</h2>
+    <form action="/upload" method="post" enctype="multipart/form-data">
+        <input type="file" name="file">
+        <input type="submit" value="Subir">
+    </form>
+
+    <!-- Sección para grabar video desde la cámara Dahua -->
+    <h2>Grabar video desde la cámara Dahua</h2>
+    <form action="/grabar_video" method="post">
+        <label for="camera_url">URL de la cámara:</label>
+        <input type="text" id="camera_url" name="camera_url" value="rtsp://admin:Jccm1986$$@192.168.1.19:554/cam/realmonitor?channel=1&subtype=0">
+        <label for="duration">Duración (segundos):</label>
+        <input type="number" id="duration" name="duration" value="10">
+        <input type="submit" value="Grabar Video">
+    </form>
+
+    <!-- Sección para procesar video almacenado en MongoDB -->
+    <h2>Procesar video desde MongoDB</h2>
+    <form action="/procesar_video" method="post">
+        <label for="video_id">ID del video:</label>
+        <input type="text" id="video_id" name="video_id" value="66a40244da596075bed698aa">
+        <input type="submit" value="Procesar Video">
+    </form>
+</body>
+</html>
+

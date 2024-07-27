@@ -1,0 +1,15 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <title>Video Procesado</title>
+</head>
+<body>
+    <h1>Video Procesado</h1>
+    <!-- Mostrar el video procesado -->
+    <video controls>
+        <source src="{{ url_for('video', filename='nombre_del_video.mp4') }}" type="video/mp4">
+        Tu navegador no soporta la reproducción de video.
+    </video>
+</body>
+</html>

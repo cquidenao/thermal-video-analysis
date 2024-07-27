@@ -1,0 +1,20 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <title>Resultados del Análisis</title>
+</head>
+<body>
+    <h1>Resultados del Análisis Térmico</h1>
+    <!-- Mostrar los resultados del análisis térmico -->
+    <p>Temperatura Mínima: {{ results.min_temp }}</p>
+    <p>Temperatura Máxima: {{ results.max_temp }}</p>
+    <p>Temperatura Promedio: {{ results.avg_temp }}</p>
+    <p>Desviación Estándar: {{ results.std_dev }}</p>
+    <p>Umbral Inferior: {{ results.lower_threshold }}</p>
+    <p>Umbral Superior: {{ results.upper_threshold }}</p>
+    <p>Anomalías Detectadas: {{ results.anomalies }}</p>
+    <!-- Mostrar la imagen térmica procesada -->
+    <img src="{{ image_url }}" alt="Imagen Térmica Procesada">
+</body>
+</html>

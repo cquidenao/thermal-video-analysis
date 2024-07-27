@@ -1,0 +1,3 @@
+config.py
+# Ignorar el entorno virtual
+env/
