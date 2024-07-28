@@ -10,6 +10,12 @@ import pymongo
 from processing.thermal_analysis import analyze_thermal_image
 
 def main():
+    """
+    Función principal para iniciar el análisis térmico de video.
+    
+    Esta función inicializa el proceso de análisis térmico de una imagen,
+    llama a la función de análisis térmico y verifica si la imagen se ha cargado correctamente.
+    """
     # Imprimir mensaje de inicialización
     print("Inicializando el análisis térmico de video")
     
@@ -31,4 +37,8 @@ def main():
 
 # Bloque principal: se ejecuta solo si el script es ejecutado directamente
 if __name__ == "__main__":
+    """
+    Bloque principal del script.
+    Llama a la función main para iniciar el análisis térmico de video.
+    """
     main()

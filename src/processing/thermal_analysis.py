@@ -2,6 +2,16 @@ import cv2
 import numpy as np
 
 def analyze_thermal_image(image_path):
+    """
+    Función para analizar una imagen térmica.
+
+    Parámetros:
+    image_path (str): Ruta del archivo de la imagen térmica.
+
+    Retorno:
+    dict: Diccionario con los resultados del análisis térmico, incluyendo la imagen con contornos, 
+          temperaturas mínima, máxima, promedio, desviación estándar, umbrales y anomalías detectadas.
+    """
     # Leer la imagen en escala de grises
     img = cv2.imread(image_path, cv2.IMREAD_GRAYSCALE)
     if img is None:

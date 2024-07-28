@@ -10,8 +10,19 @@ from bson import ObjectId
 from processing.thermal_analysis import analyze_thermal_image
 
 def procesar_video(video_id, db_name='thermal_videos', collection_name='videos'):
-    # Conectar a MongoDB
-    client = pymongo.MongoClient('mongodb://localhost:27017/')
+    """
+    Función para procesar un video almacenado en MongoDB y analizar sus frames térmicos.
+
+    Parámetros:
+    video_id (str): ID del video en MongoDB.
+    db_name (str): Nombre de la base de datos en MongoDB.
+    collection_name (str): Nombre de la colección en GridFS.
+
+    Retorno:
+    None
+    """
+    # Conectar a MongoDB usando MONGO_URI
+    client = pymongo.MongoClient(MONGO_URI)
     db = client[db_name]
     fs = gridfs.GridFS(db, collection=collection_name)
 
@@ -48,6 +59,10 @@ def procesar_video(video_id, db_name='thermal_videos', collection_name='videos')
     cv2.destroyAllWindows()
 
 if __name__ == "__main__":
+    """
+    Bloque principal del script.
+    Define el ID del video almacenado en MongoDB y llama a la función procesar_video.
+    """
     # Reemplaza '66a40244da596075bed698aa' con el ID real del video guardado en MongoDB
     video_id = '66a40244da596075bed698aa'
     procesar_video(video_id)

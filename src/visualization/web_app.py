@@ -31,12 +31,24 @@ fs = gridfs.GridFS(db, collection='videos')
 # Definir la ruta raíz
 @app.route('/')
 def index():
+    """
+    Ruta raíz que renderiza la página principal.
+
+    Retorno:
+    str: Renderización de la plantilla 'index.html'.
+    """
     logger.debug("Ruta / invocada")
     return render_template('index.html')
 
 # Ruta para subir imágenes térmicas
 @app.route('/upload', methods=['POST'])
 def upload_image():
+    """
+    Ruta para manejar la subida de imágenes térmicas.
+
+    Retorno:
+    str: Mensaje de éxito o error, o renderización de la plantilla 'result.html' con los resultados del análisis.
+    """
     logger.debug("Ruta /upload invocada")
     if 'file' not in request.files:
         return "No file part"
@@ -44,6 +56,7 @@ def upload_image():
     if file.filename == '':
         return "No selected file"
     if file:
+        # Crear la carpeta estática si no existe
         if not os.path.exists(app.static_folder):
             os.makedirs(app.static_folder)
         filepath = os.path.join(app.static_folder, file.filename)
@@ -59,29 +72,45 @@ def upload_image():
 # Ruta para capturar video
 @app.route('/capture_video')
 def capture_video():
+    """
+    Ruta que renderiza la página para capturar video.
+
+    Retorno:
+    str: Renderización de la plantilla 'video.html'.
+    """
     logger.debug("Ruta /capture_video invocada")
     return render_template('video.html')
 
 # Ruta para grabar video desde una cámara
 @app.route('/grabar_video', methods=['POST'])
 def grabar_video():
+    """
+    Ruta para manejar la grabación de video desde una cámara IP.
+
+    Retorno:
+    str: Mensaje de éxito o error con el ID del video guardado en MongoDB.
+    """
     logger.debug("Ruta /grabar_video invocada")
     camera_url = request.form.get('camera_url')
     duration = int(request.form.get('duration'))
 
+    # Conectar a la cámara
     cap = cv2.VideoCapture(camera_url)
     cap.set(cv2.CAP_PROP_BUFFERSIZE, 1)  # Configurar el tamaño del búfer
     if not cap.isOpened():
         logger.error("No se puede abrir la cámara")
         return "No se puede abrir la cámara"
 
+    # Obtener las dimensiones del video
     frame_width = int(cap.get(3))
     frame_height = int(cap.get(4))
     fourcc = cv2.VideoWriter_fourcc(*'mp4v')
 
+    # Crear un archivo temporal para guardar el video
     temp_filename = 'temp_video.mp4'
     out = cv2.VideoWriter(temp_filename, fourcc, 20.0, (frame_width, frame_height))
 
+    # Grabar el video durante la duración especificada
     start_time = datetime.datetime.now()
     while (datetime.datetime.now() - start_time).seconds < duration:
         ret, frame = cap.read()
@@ -89,9 +118,11 @@ def grabar_video():
             break
         out.write(frame)
 
+    # Liberar los recursos de la cámara
     cap.release()
     out.release()
 
+    # Guardar el video en MongoDB
     with open(temp_filename, 'rb') as f:
         video_id = fs.put(f, filename=temp_filename, uploadDate=datetime.datetime.utcnow())
 
@@ -100,15 +131,23 @@ def grabar_video():
 # Ruta para procesar un video almacenado en MongoDB
 @app.route('/procesar_video', methods=['POST'])
 def procesar_video():
+    """
+    Ruta para manejar el procesamiento de un video almacenado en MongoDB.
+
+    Retorno:
+    str: Mensaje de éxito o error después del procesamiento del video.
+    """
     logger.debug("Ruta /procesar_video invocada")
     video_id = request.form.get('video_id')
 
     try:
+        # Obtener el archivo de video desde MongoDB
         video_file = fs.get(ObjectId(video_id))
         temp_filename = 'temp_video_to_process.mp4'
         with open(temp_filename, 'wb') as f:
             f.write(video_file.read())
 
+        # Abrir el archivo de video
         cap = cv2.VideoCapture(temp_filename)
         if not cap.isOpened():
             logger.error("No se puede abrir el archivo de video")
@@ -119,15 +158,18 @@ def procesar_video():
             if not ret:
                 break
 
+            # Procesar cada frame
             temp_image_path = 'temp_frame.jpg'
             cv2.imwrite(temp_image_path, frame)
             results = analyze_thermal_image(temp_image_path)
             thermal_image = results["image_with_contours"]
 
+            # Mostrar el frame procesado (opcional)
             cv2.imshow('Frame Procesado', thermal_image)
             if cv2.waitKey(1) & 0xFF == ord('q'):
                 break
 
+        # Liberar recursos
         cap.release()
         cv2.destroyAllWindows()
 
@@ -139,16 +181,35 @@ def procesar_video():
 # Ruta de prueba
 @app.route('/test')
 def test():
+    """
+    Ruta de prueba para verificar que el servidor está funcionando.
+
+    Retorno:
+    str: Mensaje indicando que la ruta de prueba está funcionando.
+    """
     logger.debug("Ruta /test invocada")
     return "Ruta de prueba funcionando"
 
 # Ruta para mostrar imágenes estáticas
 @app.route('/static/<filename>')
 def display_image(filename):
+    """
+    Ruta para servir imágenes estáticas.
+
+    Parámetros:
+    filename (str): Nombre del archivo de imagen.
+
+    Retorno:
+    Response: Imagen solicitada.
+    """
     logger.debug(f"Ruta /static/{filename} invocada")
     return send_from_directory(app.static_folder, filename)
 
 if __name__ == "__main__":
+    """
+    Bloque principal del script.
+    Configura y ejecuta el servidor Flask con SocketIO.
+    """
     import argparse
     parser = argparse.ArgumentParser(description="Iniciar el servidor Flask")
     parser.add_argument('--port', type=int, default=8082, help='Puerto en el que se ejecutará el servidor')

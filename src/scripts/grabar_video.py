@@ -6,6 +6,18 @@ import os
 from config import CAMERA_URL, MONGO_URI
 
 def grabar_video(camera_url, duration, db_name='thermal_videos', collection_name='videos'):
+    """
+    Función para grabar un video desde una cámara IP y guardarlo en MongoDB.
+
+    Parámetros:
+    camera_url (str): URL de la cámara IP.
+    duration (int): Duración de la grabación en segundos.
+    db_name (str): Nombre de la base de datos en MongoDB.
+    collection_name (str): Nombre de la colección en GridFS.
+
+    Retorno:
+    None
+    """
     # Conectar a MongoDB usando MONGO_URI
     client = pymongo.MongoClient(MONGO_URI)
     db = client[db_name]
@@ -45,5 +57,9 @@ def grabar_video(camera_url, duration, db_name='thermal_videos', collection_name
     print(f"Video guardado en MongoDB con ID: {video_id}")
 
 if __name__ == "__main__":
+    """
+    Bloque principal del script.
+    Define la duración de la grabación y llama a la función grabar_video.
+    """
     duration = 10  # Duración en segundos
     grabar_video(CAMERA_URL, duration)
